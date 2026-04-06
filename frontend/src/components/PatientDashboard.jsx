@@ -32,6 +32,13 @@ const PatientDashboard = ({ user }) => {
 
   useEffect(() => {
     fetchSurveys();
+
+    // Actualizar cada minuto por si hay nuevas encuestas asignadas
+    const interval = setInterval(() => {
+      fetchSurveys();
+    }, 60000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleStartSurvey = (survey) => {

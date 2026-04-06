@@ -23,14 +23,24 @@ public class GloveData {
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
 
-    private Double hrvValue;
-    private Integer heartRate;
-    private Double temperature;
+    private Long ts;      // Uptime en ms del dispositivo
+    private Integer ir;   // PPG Infrarrojo
+    private Integer red;  // PPG Rojo
     
-    // Métricas Científicas
-    private Double sdnn;
-    private Double rmssd;
+    // Acelerómetro
+    private Integer ax;
+    private Integer ay;
+    private Integer az;
+    
+    // Giroscopio
+    private Integer gx;
+    private Integer gy;
+    private Integer gz;
+    
+    // Temperaturas
+    private Double obj;   // Temperatura Persona (ºC)
+    private Double amb;   // Temperatura Ambiente (ºC)
 
     @Column(nullable = false)
-    private LocalDateTime timestamp;
+    private LocalDateTime timestamp;  // Fecha/Hora del Celular al recibir
 }

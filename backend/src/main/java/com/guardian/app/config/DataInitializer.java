@@ -24,7 +24,17 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        User admin = userRepository.findByUsername("admin").orElse(new User());
+        // Limpiar base de datos para inicio fresco
+        gloveDataRepository.deleteAll();
+        surveyResponseRepository.deleteAll();
+        surveyRepository.deleteAll();
+        patientRepository.deleteAll();
+        userRepository.deleteAll();
+
+        System.out.println(">>> Base de datos limpiada. Generando credenciales base...");
+
+        // 1. Administrador Central
+        User admin = new User();
         admin.setUsername("admin");
         admin.setPassword(passwordEncoder.encode("admin123"));
         admin.setRole(Role.ADMIN);
@@ -32,21 +42,10 @@ public class DataInitializer implements CommandLineRunner {
         admin.setFullName("Administrador Central");
         admin.setProfilePicture("https://ui-avatars.com/api/?name=Admin&background=008080&color=fff");
         userRepository.save(admin);
-        System.out.println(">>> Credenciales de 'admin' sincronizadas: admin / admin123");
+        System.out.println(" - [ADMIN]: admin / admin123");
 
-        // Crear paciente de prueba universal
-        User testPatient = userRepository.findByUsername("test").orElse(new User());
-        testPatient.setUsername("test");
-        testPatient.setPassword(passwordEncoder.encode("test123"));
-        testPatient.setRole(Role.PATIENT);
-        testPatient.setCanExport(false);
-        testPatient.setFullName("Paciente de Prueba");
-        testPatient.setProfilePicture("https://ui-avatars.com/api/?name=Paciente&background=40E0D0&color=fff");
-        userRepository.save(testPatient);
-        System.out.println(">>> Paciente de prueba sincronizado: test / test123");
-
-        // Crear investigador de prueba universal
-        User testResearcher = userRepository.findByUsername("inv").orElse(new User());
+        // 2. Investigador Senior
+        User testResearcher = new User();
         testResearcher.setUsername("inv");
         testResearcher.setPassword(passwordEncoder.encode("inv123"));
         testResearcher.setRole(Role.RESEARCHER);
@@ -56,17 +55,28 @@ public class DataInitializer implements CommandLineRunner {
         testResearcher.setWorkplace("Laboratorio Central");
         testResearcher.setProfilePicture("https://ui-avatars.com/api/?name=Investigador&background=008080&color=fff");
         userRepository.save(testResearcher);
-        System.out.println(">>> Investigador de prueba sincronizado: inv / inv123");
+        System.out.println(" - [RESEARCHER]: inv / inv123");
+
+        // 3. Paciente de Prueba
+        User testPatient = new User();
+        testPatient.setUsername("test");
+        testPatient.setPassword(passwordEncoder.encode("test123"));
+        testPatient.setRole(Role.PATIENT);
+        testPatient.setCanExport(false);
+        testPatient.setFullName("Paciente de Prueba");
+        testPatient.setProfilePicture("https://ui-avatars.com/api/?name=Paciente&background=40E0D0&color=fff");
+        userRepository.save(testPatient);
+        System.out.println(" - [PATIENT]: test / test123");
 
         // Vincular el paciente 'test' al investigador 'inv'
-        Patient patient = patientRepository.findByStudyCode("test").orElse(new Patient());
+        Patient patient = new Patient();
         patient.setStudyCode("test");
         patient.setResearcher(testResearcher);
-        patient.setRegistrationDate(LocalDateTime.now().minusDays(5));
+        patient.setRegistrationDate(LocalDateTime.now());
         patientRepository.save(patient);
 
-        // Crear una encuesta de prueba estructurada
-        Survey survey = surveyRepository.findAll().stream().findFirst().orElse(new Survey());
+        // Crear una encuesta de prueba estructurada (Protocolo Vigente)
+        Survey survey = new Survey();
         survey.setTitle("Protocolo de Bienestar");
         survey.setDescription("Evaluación diaria multicriterio");
         survey.setStatus(Survey.SurveyStatus.VIGENTE);
@@ -81,64 +91,6 @@ public class DataInitializer implements CommandLineRunner {
         survey.setQuestions(questions);
         surveyRepository.save(survey);
 
-        // Insertar datos históricos del guante (Científicos)
-        if (gloveDataRepository.findByPatientOrderByTimestampDesc(patient).isEmpty()) {
-            // Día 1
-            gloveDataRepository.save(GloveData.builder()
-                    .patient(patient)
-                    .hrvValue(65.4)
-                    .heartRate(72)
-                    .sdnn(45.2)
-                    .rmssd(38.5)
-                    .temperature(36.5)
-                    .timestamp(LocalDateTime.now().minusHours(2))
-                    .build());
-            
-            gloveDataRepository.save(GloveData.builder()
-                    .patient(patient)
-                    .hrvValue(68.1)
-                    .heartRate(70)
-                    .sdnn(48.5)
-                    .rmssd(40.2)
-                    .temperature(36.4)
-                    .timestamp(LocalDateTime.now().minusHours(4))
-                    .build());
-
-            // Día 2 (Ayer)
-            gloveDataRepository.save(GloveData.builder()
-                    .patient(patient)
-                    .hrvValue(58.2)
-                    .heartRate(78)
-                    .sdnn(35.8)
-                    .rmssd(32.1)
-                    .temperature(36.7)
-                    .timestamp(LocalDateTime.now().minusDays(1).withHour(10))
-                    .build());
-        }
-
-        // Insertar respuesta a encuesta
-        if (surveyResponseRepository.findByPatientOrderByTimestampDesc(patient).isEmpty()) {
-            surveyResponseRepository.save(SurveyResponse.builder()
-                    .patient(patient)
-                    .survey(survey)
-                    .answers(Map.of(
-                        "¿Cómo se siente hoy?", "Bien", 
-                        "¿Ha tenido pensamientos negativos?", "No",
-                        "¿Nivel de estrés?", "Bajo"
-                    ))
-                    .timestamp(LocalDateTime.now().minusHours(1))
-                    .build());
-
-            surveyResponseRepository.save(SurveyResponse.builder()
-                    .patient(patient)
-                    .survey(survey)
-                    .answers(Map.of(
-                        "¿Cómo se siente hoy?", "Regular", 
-                        "¿Ha tenido pensamientos negativos?", "A veces",
-                        "¿Nivel de estrés?", "Medio"
-                    ))
-                    .timestamp(LocalDateTime.now().minusDays(1).withHour(15))
-                    .build());
-        }
+        System.out.println(">>> Entorno listo para pruebas de ingesta del guante.");
     }
 }

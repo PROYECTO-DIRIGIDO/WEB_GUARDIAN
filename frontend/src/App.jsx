@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Login from './components/Login';
 import UserManagement from './components/UserManagement';
 import PatientManagement from './components/PatientManagement';
@@ -8,19 +8,37 @@ import ProfileSettings from './components/ProfileSettings';
 import { Menu, X } from 'lucide-react';
 
 const App = () => {
-  const [user, setUser] = useState(null);
-  const [researcherTab, setResearcherTab] = useState('patients');
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('guardian_user');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [researcherTab, setResearcherTab] = useState(() => {
+    return localStorage.getItem('guardian_tab') || 'patients';
+  });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  useEffect(() => {
+    localStorage.setItem('guardian_tab', researcherTab);
+  }, [researcherTab]);
+
+  const handleLogin = (u) => {
+    setUser(u);
+    localStorage.setItem('guardian_user', JSON.stringify(u));
+    if (u.role === 'PATIENT') {
+      setResearcherTab('surveys');
+    } else if (u.role === 'ADMIN') {
+      setResearcherTab('patients');
+    }
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('guardian_user');
+    localStorage.removeItem('guardian_tab');
+  };
+
   if (!user) {
-    return <Login onLogin={(u) => {
-      setUser(u);
-      if (u.role === 'PATIENT') {
-        setResearcherTab('surveys');
-      } else if (u.role === 'ADMIN') {
-        setResearcherTab('patients');
-      }
-    }} />;
+    return <Login onLogin={handleLogin} />;
   }
 
   return (
@@ -53,7 +71,7 @@ const App = () => {
           )}
 
           <button 
-            onClick={() => setUser(null)}
+            onClick={handleLogout}
             className="text-slate-400 hover:text-red-500 transition text-sm font-bold"
           >
             Salir
@@ -86,7 +104,7 @@ const App = () => {
             </button>
           )}
           <button 
-            onClick={() => setUser(null)}
+            onClick={handleLogout}
             className="text-left text-sm font-bold text-red-400 hover:text-red-600 transition"
           >
             Cerrar Sesión

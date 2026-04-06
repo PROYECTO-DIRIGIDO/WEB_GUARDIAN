@@ -33,20 +33,18 @@ public class HistoryController {
         List<SurveyResponse> surveyResponses = surveyResponseRepository.findByPatientOrderByTimestampDesc(patient);
 
         // Calcular Estadísticas (Medias)
-        double avgHrv = gloveData.stream().mapToDouble(d -> d.getHrvValue() != null ? d.getHrvValue() : 0.0).average().orElse(0.0);
-        double avgPulse = gloveData.stream().mapToDouble(d -> d.getHeartRate() != null ? d.getHeartRate() : 0.0).average().orElse(0.0);
-        double avgSdnn = gloveData.stream().mapToDouble(d -> d.getSdnn() != null ? d.getSdnn() : 0.0).average().orElse(0.0);
-        double avgRmssd = gloveData.stream().mapToDouble(d -> d.getRmssd() != null ? d.getRmssd() : 0.0).average().orElse(0.0);
+        double avgIr = gloveData.stream().mapToDouble(d -> d.getIr() != null ? d.getIr() : 0.0).average().orElse(0.0);
+        double avgRed = gloveData.stream().mapToDouble(d -> d.getRed() != null ? d.getRed() : 0.0).average().orElse(0.0);
+        double avgTemp = gloveData.stream().mapToDouble(d -> d.getObj() != null ? d.getObj() : 0.0).average().orElse(0.0);
 
         Map<String, Object> history = new HashMap<>();
         history.put("glove", gloveData);
         history.put("surveys", surveyResponses);
         
         Map<String, Double> statistics = new HashMap<>();
-        statistics.put("avgHrv", Math.round(avgHrv * 100.0) / 100.0);
-        statistics.put("avgPulse", Math.round(avgPulse * 10.0) / 10.0);
-        statistics.put("avgSdnn", Math.round(avgSdnn * 100.0) / 100.0);
-        statistics.put("avgRmssd", Math.round(avgRmssd * 100.0) / 100.0);
+        statistics.put("avgIr", Math.round(avgIr * 100.0) / 100.0);
+        statistics.put("avgRed", Math.round(avgRed * 100.0) / 100.0);
+        statistics.put("avgTemp", Math.round(avgTemp * 100.0) / 100.0);
         history.put("statistics", statistics);
         
         return history;

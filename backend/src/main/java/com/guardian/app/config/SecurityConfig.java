@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/researcher/surveys/active/**", "/api/researcher/surveys/submit").hasAnyRole("RESEARCHER", "PATIENT")
+                .requestMatchers("/api/researcher/surveys/active/**", "/api/researcher/surveys/submit", "/api/researcher/glove/submit").hasAnyRole("RESEARCHER", "PATIENT")
                 .requestMatchers("/api/researcher/**").hasRole("RESEARCHER")
                 .anyRequest().authenticated()
             )

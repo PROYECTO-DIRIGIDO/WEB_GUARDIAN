@@ -59,6 +59,14 @@ const PatientManagement = ({ user }) => {
   useEffect(() => {
     if (selectedPatient) {
       fetchPatientDetails(selectedPatient);
+
+      // Configurar actualización automática cada 30 segundos
+      const interval = setInterval(() => {
+        fetchPatientDetails(selectedPatient);
+      }, 30000);
+
+      // Limpiar el intervalo cuando el componente se desmonte o cambie el paciente
+      return () => clearInterval(interval);
     }
   }, [selectedPatient]);
 
@@ -198,10 +206,10 @@ const PatientManagement = ({ user }) => {
                 <div className="space-y-8 animate-in fade-in duration-500">
                    {/* Resumen de Medias Estadísticas */}
                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                      <StatCard title="Mean HRV" value={`${history.statistics?.avgHrv ?? '--'}ms`} label="Media Global" icon={<HeartPulse size={20}/>} color="teal" />
-                      <StatCard title="Mean Pulse" value={`${history.statistics?.avgPulse ?? '--'}bpm`} label="Frecuencia Media" icon={<Activity size={20}/>} color="cyan" />
-                      <StatCard title="SDNN" value={`${history.statistics?.avgSdnn ?? '--'}ms`} label="Desviación Estándar" icon={<TrendingUp size={20}/>} color="indigo" />
-                      <StatCard title="RMSSD" value={`${history.statistics?.avgRmssd ?? '--'}ms`} label="Variabilidad" icon={<BarChart3 size={20}/>} color="pink" />
+                      <StatCard title="Registros Recibidos" value={`${history.glove?.length || 0}`} label="Total Sincronizado" icon={<ListChecks size={20}/>} color="indigo" />
+                      <StatCard title="Media Infrarrojo" value={`${history.statistics?.avgIr ?? '--'}`} label="PPG IR Global" icon={<HeartPulse size={20}/>} color="teal" />
+                      <StatCard title="Media Luz Roja" value={`${history.statistics?.avgRed ?? '--'}`} label="PPG Red Global" icon={<Activity size={20}/>} color="pink" />
+                      <StatCard title="Temperatura Media" value={`${history.statistics?.avgTemp ?? '--'} ºC`} label="Media Termómetro Corporal" icon={<TrendingUp size={20}/>} color="cyan" />
                    </div>
 
                    {/* Botón de Exportación Avanzada */}
@@ -230,15 +238,15 @@ const PatientManagement = ({ user }) => {
                                     <Database size={20} />
                                  </div>
                                  <div>
-                                    <p className="text-xs font-black text-slate-800">{item.timestamp}</p>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Scientific Metric Entry</p>
+                                    <p className="text-xs font-black text-slate-800">{new Date(item.timestamp).toLocaleString()}</p>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Uptime TS: {item.ts}ms</p>
                                  </div>
                               </div>
-                              <div className="flex items-center space-x-12 px-8">
-                                 <Metric value={item.hrvValue} unit="ms" label="HRV" />
-                                 <Metric value={item.sdnn} unit="ms" label="SDNN" />
-                                 <Metric value={item.rmssd} unit="ms" label="RMSSD" />
-                                 <Metric value={item.heartRate} unit="bpm" label="HR" />
+                              <div className="flex items-center space-x-8 px-8">
+                                 <Metric value={item.ir} unit="" label="Infra" />
+                                 <Metric value={item.red} unit="" label="Red" />
+                                 <Metric value={item.ax} unit="" label="Acc X" />
+                                 <Metric value={item.obj} unit="ºC" label="Temp Corp" />
                               </div>
                               <div className="w-10 h-10 rounded-full flex items-center justify-center text-slate-200">
                                  <ChevronRight size={20} />

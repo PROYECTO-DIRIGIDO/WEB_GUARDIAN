@@ -49,7 +49,7 @@ public class ExportController {
                 
                 // Header
                 Row header = sheet.createRow(0);
-                String[] columns = {"Hora", "HRV (ms)", "Pulso (bpm)", "SDNN", "RMSSD", "Temperatura (C)"};
+                String[] columns = {"Hora", "TS (ms)", "IR (PPG)", "Red (PPG)", "Acc X", "Acc Y", "Acc Z", "Gyr X", "Gyr Y", "Gyr Z", "Temp Obj (C)", "Temp Amb (C)"};
                 for (int i = 0; i < columns.length; i++) {
                     Cell cell = header.createCell(i);
                     cell.setCellValue(columns[i]);
@@ -65,11 +65,17 @@ public class ExportController {
                 for (GloveData data : entry.getValue()) {
                     Row row = sheet.createRow(rowIdx++);
                     row.createCell(0).setCellValue(data.getTimestamp().toLocalTime().toString());
-                    row.createCell(1).setCellValue(data.getHrvValue() != null ? data.getHrvValue() : 0.0);
-                    row.createCell(2).setCellValue(data.getHeartRate() != null ? data.getHeartRate() : 0);
-                    row.createCell(3).setCellValue(data.getSdnn() != null ? data.getSdnn() : 0.0);
-                    row.createCell(4).setCellValue(data.getRmssd() != null ? data.getRmssd() : 0.0);
-                    row.createCell(5).setCellValue(data.getTemperature() != null ? data.getTemperature() : 0.0);
+                    row.createCell(1).setCellValue(data.getTs() != null ? data.getTs() : 0L);
+                    row.createCell(2).setCellValue(data.getIr() != null ? data.getIr() : 0);
+                    row.createCell(3).setCellValue(data.getRed() != null ? data.getRed() : 0);
+                    row.createCell(4).setCellValue(data.getAx() != null ? data.getAx() : 0);
+                    row.createCell(5).setCellValue(data.getAy() != null ? data.getAy() : 0);
+                    row.createCell(6).setCellValue(data.getAz() != null ? data.getAz() : 0);
+                    row.createCell(7).setCellValue(data.getGx() != null ? data.getGx() : 0);
+                    row.createCell(8).setCellValue(data.getGy() != null ? data.getGy() : 0);
+                    row.createCell(9).setCellValue(data.getGz() != null ? data.getGz() : 0);
+                    row.createCell(10).setCellValue(data.getObj() != null ? data.getObj() : 0.0);
+                    row.createCell(11).setCellValue(data.getAmb() != null ? data.getAmb() : 0.0);
                 }
             }
 
