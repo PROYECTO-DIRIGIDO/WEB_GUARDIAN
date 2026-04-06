@@ -16,8 +16,10 @@ public class ProfileController {
     private final UserRepository userRepository;
 
     @GetMapping
-    public ResponseEntity<User> getMyProfile(Authentication authentication) {
+    public ResponseEntity<?> getMyProfile(Authentication authentication) {
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
+        // Ocultar password por seguridad antes de enviar
+        user.setPassword(null);
         return ResponseEntity.ok(user);
     }
 
@@ -31,13 +33,14 @@ public class ProfileController {
         user.setEmail(request.getEmail());
         user.setWorkplace(request.getWorkplace());
         
-        // Mantener la foto generica si no se envía una
         if (request.getProfilePicture() != null && !request.getProfilePicture().isEmpty()) {
             user.setProfilePicture(request.getProfilePicture());
         }
 
         userRepository.save(user);
-        return ResponseEntity.ok("Perfil actualizado con éxito");
+        
+        // Responder con un objeto JSON válido
+        return ResponseEntity.ok(java.util.Map.of("message", "Perfil actualizado con éxito"));
     }
 
     @Data
