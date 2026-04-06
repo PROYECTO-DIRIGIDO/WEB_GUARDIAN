@@ -23,7 +23,7 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f8f7] flex flex-col font-sans">
+    <div className="min-h-screen bg-transparent flex flex-col font-sans">
       {/* Barra de Navegación Premium */}
       <nav className="bg-white/80 backdrop-blur-md shadow-sm border-b px-8 py-4 flex justify-between items-center sticky top-0 z-50">
         <div className="flex items-center space-x-3">
