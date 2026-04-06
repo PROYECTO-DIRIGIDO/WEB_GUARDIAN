@@ -335,10 +335,10 @@ const PatientManagement = ({ user }) => {
 
   return (
     <div className="space-y-8 animate-in slide-in-from-bottom duration-700">
-      <div className="flex justify-between items-center">
+      <div className="bg-white/10 backdrop-blur-md rounded-3xl px-8 py-6 border border-white/10 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-black text-slate-800 tracking-tight">Suite de <span className="text-teal-600">Investigación Académica</span></h1>
-          <p className="text-slate-500 font-medium">Análisis avanzado de HRV y correlación de protocolos</p>
+          <h1 className="text-3xl font-black text-white tracking-tight">Suite de <span className="text-teal-300">Investigación Académica</span></h1>
+          <p className="text-white/60 font-medium mt-1">Análisis avanzado de HRV y correlación de protocolos</p>
         </div>
       </div>
 

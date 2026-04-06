@@ -216,14 +216,14 @@ const PatientDashboard = ({ user }) => {
 
   return (
     <div className="space-y-12 animate-in slide-in-from-bottom duration-700">
-      <div className="flex justify-between items-end">
+      <div className="bg-white/10 backdrop-blur-md rounded-3xl px-8 py-6 border border-white/10 flex justify-between items-end">
         <div>
-           <h1 className="text-4xl font-black text-slate-800 tracking-tight">Mis <span className="text-teal-600">Protocolos Activos</span></h1>
-           <p className="text-slate-400 font-medium mt-2">Por favor, selecciona una evaluación para sincronizar tus respuestas.</p>
+           <h1 className="text-4xl font-black text-white tracking-tight">Mis <span className="text-teal-300">Protocolos Activos</span></h1>
+           <p className="text-white/60 font-medium mt-2">Por favor, selecciona una evaluación para sincronizar tus respuestas.</p>
         </div>
-        <div className="hidden lg:block bg-white px-6 py-4 rounded-[2rem] shadow-sm border border-slate-100">
-           <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Sincronización Científica</p>
-           <p className="text-teal-600 font-black text-xs uppercase tracking-tight">Estado: Conectado</p>
+        <div className="hidden lg:block bg-white/10 px-6 py-4 rounded-[2rem] border border-white/10">
+           <p className="text-[9px] font-black text-white/40 uppercase tracking-widest">Sincronización Científica</p>
+           <p className="text-teal-300 font-black text-xs uppercase tracking-tight">Estado: Conectado</p>
         </div>
       </div>
 

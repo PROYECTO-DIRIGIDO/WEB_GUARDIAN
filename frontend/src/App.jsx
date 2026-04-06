@@ -70,16 +70,16 @@ const App = () => {
           </div>
         ) : user.role === 'PATIENT' ? (
           <div className="space-y-8">
-            <div className="flex border-b border-slate-200">
+            <div className="flex border-b border-white/20 bg-white/10 backdrop-blur-md rounded-t-2xl px-4">
                <button 
                  onClick={() => setResearcherTab('surveys')}
-                 className={`pb-4 px-6 text-sm font-black transition-all ${researcherTab === 'surveys' ? 'border-b-4 border-teal-500 text-teal-900' : 'text-slate-400 hover:text-slate-600'}`}
+                 className={`pb-4 px-6 text-sm font-black transition-all ${researcherTab === 'surveys' ? 'border-b-4 border-teal-400 text-white' : 'text-white/50 hover:text-white/80'}`}
                >
                  MIS ENCUESTAS
                </button>
                <button 
                  onClick={() => setResearcherTab('profile')}
-                 className={`pb-4 px-6 text-sm font-black transition-all ${researcherTab === 'profile' ? 'border-b-4 border-teal-500 text-teal-900' : 'text-slate-400 hover:text-slate-600'}`}
+                 className={`pb-4 px-6 text-sm font-black transition-all ${researcherTab === 'profile' ? 'border-b-4 border-teal-400 text-white' : 'text-white/50 hover:text-white/80'}`}
                >
                  MI PERFIL
                </button>
@@ -88,16 +88,16 @@ const App = () => {
           </div>
         ) : (
           <div className="space-y-8">
-            <div className="flex border-b border-slate-200">
+            <div className="flex border-b border-white/20 bg-white/10 backdrop-blur-md rounded-t-2xl px-4">
               <button 
                 onClick={() => setResearcherTab('patients')}
-                className={`pb-4 px-6 text-sm font-black transition-all ${researcherTab === 'patients' ? 'border-b-4 border-teal-500 text-teal-900' : 'text-slate-400 hover:text-slate-600'}`}
+                className={`pb-4 px-6 text-sm font-black transition-all ${researcherTab === 'patients' ? 'border-b-4 border-teal-400 text-white' : 'text-white/50 hover:text-white/80'}`}
               >
                 GESTI&Oacute;N DE PACIENTES
               </button>
               <button 
                 onClick={() => setResearcherTab('surveys')}
-                className={`pb-4 px-6 text-sm font-black transition-all ${researcherTab === 'surveys' ? 'border-b-4 border-teal-500 text-teal-900' : 'text-slate-400 hover:text-slate-600'}`}
+                className={`pb-4 px-6 text-sm font-black transition-all ${researcherTab === 'surveys' ? 'border-b-4 border-teal-400 text-white' : 'text-white/50 hover:text-white/80'}`}
               >
                 DISE&Ntilde;O DE ENCUESTAS
               </button>
