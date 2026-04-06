@@ -15,11 +15,6 @@
       75%  { background-position: 50% 20%; }
       100% { background-position: 0% 50%; }
     }
-    @keyframes wave2 {
-      0%   { opacity: 0.6; transform: scale(1);   }
-      50%  { opacity: 1;   transform: scale(1.05); }
-      100% { opacity: 0.6; transform: scale(1);   }
-    }
     .animated-bg {
       background:
         radial-gradient(ellipse at 20% 60%, #0ea5e9 0%, transparent 55%),
@@ -27,7 +22,7 @@
         radial-gradient(ellipse at 50% 90%, #06b6d4 0%, transparent 50%),
         linear-gradient(180deg, #020617 0%, #0f172a 40%, #042f2e 100%);
       background-size: 400% 400%, 300% 300%, 250% 250%, 100% 100%;
-      animation: wave1 18s ease-in-out infinite, wave2 9s ease-in-out infinite;
+      animation: wave1 18s ease-in-out infinite;
     }
     * { font-family: 'Outfit', sans-serif; }
   </style>
