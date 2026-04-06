@@ -20,7 +20,7 @@ const SurveyManagement = ({ user }) => {
 
   const fetchSurveys = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/researcher/surveys', {
+      const response = await fetch('http://192.168.100.5:8080/api/researcher/surveys', {
         headers: { 'Authorization': `Bearer ${user.token}` }
       });
       if (response.ok) {
@@ -89,7 +89,7 @@ const SurveyManagement = ({ user }) => {
   const handleCreateSurvey = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8080/api/researcher/surveys', {
+      const response = await fetch('http://192.168.100.5:8080/api/researcher/surveys', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ const SurveyManagement = ({ user }) => {
 
   const handleActivate = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/researcher/surveys/${id}/activate`, {
+      const response = await fetch(`http://192.168.100.5:8080/api/researcher/surveys/${id}/activate`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${user.token}` }
       });
@@ -132,7 +132,7 @@ const SurveyManagement = ({ user }) => {
 
   const handleDeactivate = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/researcher/surveys/${id}/deactivate`, {
+      const response = await fetch(`http://192.168.100.5:8080/api/researcher/surveys/${id}/deactivate`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${user.token}` }
       });
@@ -148,7 +148,7 @@ const SurveyManagement = ({ user }) => {
   const handleDelete = async (id) => {
     if (!window.confirm("¿Estás seguro de eliminar este protocolo?")) return;
     try {
-      const response = await fetch(`http://localhost:8080/api/researcher/surveys/${id}`, {
+      const response = await fetch(`http://192.168.100.5:8080/api/researcher/surveys/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${user.token}` }
       });

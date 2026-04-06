@@ -20,10 +20,10 @@ const UserManagement = ({ user }) => {
 
   const fetchData = async () => {
     try {
-      const uRes = await axios.get('http://localhost:8080/api/admin/users', {
+      const uRes = await axios.get('http://192.168.100.5:8080/api/admin/users', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
-      const pRes = await axios.get('http://localhost:8080/api/admin/patients', {
+      const pRes = await axios.get('http://192.168.100.5:8080/api/admin/patients', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setUsers(uRes.data);
@@ -40,7 +40,7 @@ const UserManagement = ({ user }) => {
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8080/api/admin/users', {
+      await axios.post('http://192.168.100.5:8080/api/admin/users', {
         username,
         password,
         role: 'RESEARCHER',
@@ -61,7 +61,7 @@ const UserManagement = ({ user }) => {
   const handleDelete = async (id) => {
     if (window.confirm("¿Seguro que deseas eliminar este investigador?")) {
       try {
-        await axios.delete(`http://localhost:8080/api/admin/users/${id}`, {
+        await axios.delete(`http://192.168.100.5:8080/api/admin/users/${id}`, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
         fetchData();
@@ -75,7 +75,7 @@ const UserManagement = ({ user }) => {
     e.preventDefault();
     setPatientMessage('');
     try {
-      await axios.post('http://localhost:8080/api/admin/patients', {
+      await axios.post('http://192.168.100.5:8080/api/admin/patients', {
         studyCode: newPatientStudyCode,
         password: newPatientPassword
       }, {
@@ -95,7 +95,7 @@ const UserManagement = ({ user }) => {
     e.preventDefault();
     if (!selectedResearcherId || !selectedPatientId) return alert("Selecciona ambos");
     try {
-      await axios.post('http://localhost:8080/api/admin/assign-patient', {
+      await axios.post('http://192.168.100.5:8080/api/admin/assign-patient', {
         patientId: parseInt(selectedPatientId),
         researcherId: parseInt(selectedResearcherId)
       }, {
@@ -113,7 +113,7 @@ const UserManagement = ({ user }) => {
   const handleUnassignPatient = async (id) => {
     if (window.confirm("¿Deseas desvincular a este participante?")) {
       try {
-        await axios.post(`http://localhost:8080/api/admin/unassign-patient/${id}`, {}, {
+        await axios.post(`http://192.168.100.5:8080/api/admin/unassign-patient/${id}`, {}, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
         fetchData();
@@ -386,7 +386,7 @@ const UserManagement = ({ user }) => {
                                     <button 
                                         onClick={async () => {
                                             if (window.confirm(`¿Confirmas la eliminación definitiva del paciente ${p.studyCode}? Esto borrará también sus credenciales.`)) {
-                                                await axios.delete(`http://localhost:8080/api/admin/patients/${p.id}`, {
+                                                await axios.delete(`http://192.168.100.5:8080/api/admin/patients/${p.id}`, {
                                                     headers: { Authorization: `Bearer ${user.token}` }
                                                 });
                                                 fetchPatients();

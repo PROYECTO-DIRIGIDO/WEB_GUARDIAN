@@ -8,7 +8,7 @@ const ProfileSettings = ({ user, onUpdate }) => {
 
   const fetchProfile = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/profile', {
+      const response = await fetch('http://192.168.100.5:8080/api/profile', {
         headers: { 'Authorization': `Bearer ${user.token}` }
       });
       if (response.ok) {
@@ -29,7 +29,7 @@ const ProfileSettings = ({ user, onUpdate }) => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8080/api/profile', {
+      const response = await fetch('http://192.168.100.5:8080/api/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
