@@ -30,4 +30,11 @@ public class User {
     @Builder.Default
     @Column(nullable = false)
     private boolean canExport = false;
+
+    private String fullName;
+    private String position; // Cargo
+    private String phone;
+    private String email;
+    private String workplace;
+    private String profilePicture;
 }

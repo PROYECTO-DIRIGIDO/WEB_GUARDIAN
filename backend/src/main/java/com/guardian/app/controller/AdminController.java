@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -52,9 +53,11 @@ public class AdminController {
     }
 
     @PostMapping("/patients")
+    @Transactional
     public ResponseEntity<?> createPatient(@RequestBody PatientRequest request) {
-        if (userRepository.findByUsername(request.getStudyCode()).isPresent()) {
-            return ResponseEntity.badRequest().body("Ya existe un acceso creado para este código de estudio");
+        if (userRepository.findByUsername(request.getStudyCode()).isPresent() || 
+            patientRepository.findByStudyCode(request.getStudyCode()).isPresent()) {
+            return ResponseEntity.badRequest().body("Ya existe un registro o acceso para este código de estudio.");
         }
 
         // 1. Registro de Usuario (PATIENT)

@@ -17,10 +17,20 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
-            // Autenticación simplificada para prototipo de tesis
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                    "admin", null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN")));
-            SecurityContextHolder.getContext().setAuthentication(auth);
+            try {
+                String fullToken = token.substring(7); // Extrae "username:ROLE"
+                String[] parts = fullToken.split(":");
+                if (parts.length == 2) {
+                    String username = parts[0];
+                    String role = "ROLE_" + parts[1];
+                    
+                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                            username, null, Collections.singletonList(new SimpleGrantedAuthority(role)));
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
+            } catch (Exception e) {
+                // Token malformado, ignorar
+            }
         }
         chain.doFilter(request, response);
     }

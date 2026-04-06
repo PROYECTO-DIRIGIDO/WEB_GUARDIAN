@@ -18,32 +18,24 @@ const UserManagement = ({ user }) => {
   const [activeTab, setActiveTab] = useState('researchers');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const fetchUsers = async () => {
+  const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/admin/users', {
+      const uRes = await axios.get('http://localhost:8080/api/admin/users', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
-      setUsers(response.data);
-    } catch (err) {
-      console.error("Error al cargar usuarios");
-    }
-  };
-
-  const fetchPatients = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/api/admin/patients', {
+      const pRes = await axios.get('http://localhost:8080/api/admin/patients', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
-      setAllPatients(response.data);
+      setUsers(uRes.data);
+      setAllPatients(pRes.data);
     } catch (err) {
-      console.error("Error al cargar pacientes");
+      console.error("Error al cargar datos");
     }
   };
 
   useEffect(() => {
-    fetchUsers();
-    fetchPatients();
-  }, []);
+    fetchData();
+  }, [user.token]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -60,7 +52,7 @@ const UserManagement = ({ user }) => {
       setUsername('');
       setPassword('');
       setCanExport(false);
-      fetchUsers();
+      fetchData();
     } catch (err) {
       setMessage("Error al crear usuario");
     }
@@ -68,15 +60,20 @@ const UserManagement = ({ user }) => {
 
   const handleDelete = async (id) => {
     if (window.confirm("¿Seguro que deseas eliminar este investigador?")) {
-      await axios.delete(`http://localhost:8080/api/admin/users/${id}`, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
-      fetchUsers();
+      try {
+        await axios.delete(`http://localhost:8080/api/admin/users/${id}`, {
+          headers: { Authorization: `Bearer ${user.token}` }
+        });
+        fetchData();
+      } catch (err) {
+        alert("Error al eliminar");
+      }
     }
   };
 
   const handleCreatePatient = async (e) => {
     e.preventDefault();
+    setPatientMessage('');
     try {
       await axios.post('http://localhost:8080/api/admin/patients', {
         studyCode: newPatientStudyCode,
@@ -84,18 +81,19 @@ const UserManagement = ({ user }) => {
       }, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
-      setPatientMessage(`Acceso para ${newPatientStudyCode} creado con éxito.`);
+      setPatientMessage(`¡Éxito! Acceso para ${newPatientStudyCode} creado.`);
       setNewPatientStudyCode('');
       setNewPatientPassword('');
-      fetchPatients();
+      fetchData();
     } catch (err) {
-      setPatientMessage(err.response?.data || "Error al crear acceso de paciente (El código podría estar duplicado)");
+      const detail = err.response?.data || "Error al crear acceso";
+      setPatientMessage(`Error: ${detail}`);
     }
   };
 
   const handleAssignPatient = async (e) => {
     e.preventDefault();
-    if (!selectedResearcherId || !selectedPatientId) return alert("Selecciona paciente e investigador");
+    if (!selectedResearcherId || !selectedPatientId) return alert("Selecciona ambos");
     try {
       await axios.post('http://localhost:8080/api/admin/assign-patient', {
         patientId: parseInt(selectedPatientId),
@@ -103,30 +101,32 @@ const UserManagement = ({ user }) => {
       }, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
-      setAssignMessage(`Participante asignado con éxito.`);
+      setAssignMessage(`Participante vinculado.`);
       setSelectedPatientId('');
       setSelectedResearcherId('');
-      fetchPatients();
+      fetchData();
     } catch (err) {
-      setAssignMessage("Error al realizar la vinculación");
+      setAssignMessage("Error en la vinculación");
     }
   };
 
   const handleUnassignPatient = async (id) => {
-    if (window.confirm("¿Deseas desvincular a este participante del investigador?")) {
-        try {
-            await axios.post(`http://localhost:8080/api/admin/unassign-patient/${id}`, {}, {
-                headers: { Authorization: `Bearer ${user.token}` }
-            });
-            fetchPatients();
-        } catch (err) {
-            alert("Error al desvincular");
-        }
+    if (window.confirm("¿Deseas desvincular a este participante?")) {
+      try {
+        await axios.post(`http://localhost:8080/api/admin/unassign-patient/${id}`, {}, {
+          headers: { Authorization: `Bearer ${user.token}` }
+        });
+        fetchData();
+      } catch (err) {
+        alert("Error al desvincular");
+      }
     }
   };
+
   const filteredUsers = users.filter(u => 
-    u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.role.toLowerCase().includes(searchTerm.toLowerCase())
+    (u.role === 'ADMIN' || u.role === 'RESEARCHER') &&
+    (u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+     u.role.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const filteredPatients = allPatients.filter(p => 
