@@ -135,7 +135,7 @@ public class SurveyController {
                 .patient(patient)
                 .survey(survey)
                 .answers(request.getAnswers())
-                .timestamp(LocalDateTime.now())
+                .timestamp(request.getTimestamp() != null ? request.getTimestamp() : LocalDateTime.now())
                 .build();
         
         surveyResponseRepository.save(response);
@@ -163,6 +163,7 @@ public class SurveyController {
     public static class SurveyResponseRequest {
         private Long surveyId;
         private Map<String, String> answers;
+        private LocalDateTime timestamp;
     }
 
     @Data
