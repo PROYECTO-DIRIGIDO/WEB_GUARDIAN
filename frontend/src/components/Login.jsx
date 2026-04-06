@@ -21,8 +21,8 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center font-sans">
-      <div className="bg-white/70 backdrop-blur-xl p-10 rounded-[2.5rem] shadow-2xl w-[26rem] text-center border border-white/50 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center font-sans px-4">
+      <div className="bg-white/70 backdrop-blur-xl p-8 md:p-10 rounded-[2.5rem] shadow-2xl w-full max-w-[26rem] text-center border border-white/50 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 to-cyan-500"></div>
         <img src="/logo.png" alt="Logo Guardian" className="mx-auto w-28 mb-8 drop-shadow-lg" />
         <h2 className="text-3xl font-extrabold text-teal-900 mb-2 tracking-tight">Sistema <span className="text-cyan-600">GUARDIAN</span></h2>

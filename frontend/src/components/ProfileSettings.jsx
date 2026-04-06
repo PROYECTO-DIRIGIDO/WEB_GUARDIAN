@@ -74,8 +74,8 @@ const ProfileSettings = ({ user, onUpdate }) => {
            </div>
         </div>
 
-        <div className="pt-20 px-12 pb-12">
-          <div className="flex justify-between items-start mb-10">
+        <div className="pt-20 px-6 md:px-12 pb-8 md:pb-12">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-8 md:mb-10">
             <div>
               <h2 className="text-3xl font-black text-slate-800 tracking-tight">{profile.fullName || profile.username}</h2>
               <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.2em]">{profile.position || 'Miembro de Guardian'}</p>

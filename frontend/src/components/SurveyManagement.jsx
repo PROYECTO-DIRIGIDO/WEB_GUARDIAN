@@ -173,14 +173,14 @@ const SurveyManagement = ({ user }) => {
         </div>
       )}
 
-      <div className="flex justify-between items-end bg-white/50 backdrop-blur-md p-8 rounded-[2.5rem] border border-white shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 bg-white/50 backdrop-blur-md p-6 md:p-8 rounded-[2.5rem] border border-white shadow-sm">
         <div>
-          <h2 className="text-4xl font-black text-slate-900 tracking-tighter">Gesti&oacute;n de <span className="text-teal-600">Protocolos</span></h2>
+          <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter">Gesti&oacute;n de <span className="text-teal-600">Protocolos</span></h2>
           <p className="text-slate-500 font-medium mt-1">Dise&ntilde;a instrumentos de evaluaci&oacute;n clínica estructurada</p>
         </div>
         <button 
           onClick={() => setShowModal(true)}
-          className="bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-black transition flex items-center space-x-3 shadow-2xl shadow-slate-200 active:scale-95 text-sm uppercase tracking-widest"
+          className="bg-slate-900 hover:bg-slate-800 text-white px-6 md:px-8 py-3 md:py-4 rounded-2xl font-black transition flex items-center space-x-3 shadow-2xl shadow-slate-200 active:scale-95 text-sm uppercase tracking-widest w-full sm:w-auto justify-center"
         >
           <Plus size={20} />
           <span>Nueva Encuesta</span>

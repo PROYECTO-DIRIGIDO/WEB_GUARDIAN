@@ -136,7 +136,7 @@ const UserManagement = ({ user }) => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="bg-white/80 backdrop-blur-md p-10 rounded-[2.5rem] shadow-sm border border-white">
+      <div className="bg-white/80 backdrop-blur-md p-6 md:p-10 rounded-[2.5rem] shadow-sm border border-white">
         <div className="flex items-center space-x-4 mb-8">
           <div className="p-3 bg-teal-100 rounded-2xl text-teal-600">
             <UserPlus size={24} />
@@ -144,7 +144,7 @@ const UserManagement = ({ user }) => {
           <h2 className="text-2xl font-black text-slate-800">Registrar Investigador</h2>
         </div>
         
-        <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <form onSubmit={handleCreate} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
           <div className="space-y-2">
             <label className="text-xs font-bold text-slate-400 uppercase ml-2">Usuario</label>
             <input 
@@ -183,7 +183,7 @@ const UserManagement = ({ user }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* SECCIÓN 1: CREACIÓN DE ACCESO */}
-        <div className="bg-white/80 backdrop-blur-md p-10 rounded-[2.5rem] shadow-sm border border-white">
+        <div className="bg-white/80 backdrop-blur-md p-6 md:p-10 rounded-[2.5rem] shadow-sm border border-white">
           <div className="flex items-center space-x-4 mb-6">
             <div className="p-3 bg-cyan-100 rounded-2xl text-cyan-600">
               <CirclePlus size={24} />
@@ -224,7 +224,7 @@ const UserManagement = ({ user }) => {
         </div>
 
         {/* SECCIÓN 2: VINCULACIÓN */}
-        <div className="bg-white/80 backdrop-blur-md p-10 rounded-[2.5rem] shadow-sm border border-white">
+        <div className="bg-white/80 backdrop-blur-md p-6 md:p-10 rounded-[2.5rem] shadow-sm border border-white">
           <div className="flex items-center space-x-4 mb-6">
             <div className="p-3 bg-indigo-100 rounded-2xl text-indigo-600">
               <UserPlus size={24} />
@@ -270,7 +270,7 @@ const UserManagement = ({ user }) => {
       </div>
 
       {/* SECCIÓN DE LISTAS CON FILTRO Y PESTAÑAS */}
-      <div className="bg-white/80 backdrop-blur-md p-10 rounded-[2.5rem] shadow-sm border border-white">
+      <div className="bg-white/80 backdrop-blur-md p-6 md:p-10 rounded-[2.5rem] shadow-sm border border-white">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 space-y-4 md:space-y-0">
             <div className="flex bg-slate-100 p-1 rounded-2xl w-fit">
                 <button 
@@ -300,7 +300,7 @@ const UserManagement = ({ user }) => {
         </div>
 
         {activeTab === 'researchers' ? (
-            <div className="overflow-hidden rounded-2xl border border-slate-100">
+            <div className="overflow-x-auto overflow-hidden rounded-2xl border border-slate-100">
                 <table className="w-full text-left border-collapse">
                     <thead className="bg-slate-50">
                         <tr>
@@ -341,7 +341,7 @@ const UserManagement = ({ user }) => {
                 </table>
             </div>
         ) : (
-            <div className="overflow-hidden rounded-3xl border border-slate-100">
+            <div className="overflow-x-auto overflow-hidden rounded-3xl border border-slate-100">
                 <table className="w-full text-left border-collapse">
                     <thead className="bg-slate-50/50">
                         <tr>

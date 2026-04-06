@@ -150,9 +150,9 @@ const PatientManagement = ({ user }) => {
           <span>Volver al Dashboard</span>
         </button>
 
-        <div className="bg-white/80 backdrop-blur-xl p-10 rounded-[3rem] shadow-sm border border-white relative overflow-hidden">
+        <div className="bg-white/80 backdrop-blur-xl p-6 md:p-10 rounded-[3rem] shadow-sm border border-white relative overflow-hidden">
           {/* Header Científico */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-10 gap-6">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 md:mb-10 gap-6">
             <div className="flex items-center space-x-6">
               <div className="relative">
                 <img 
@@ -335,7 +335,7 @@ const PatientManagement = ({ user }) => {
 
   return (
     <div className="space-y-8 animate-in slide-in-from-bottom duration-700">
-      <div className="bg-white/10 backdrop-blur-md rounded-3xl px-8 py-6 border border-white/10 flex justify-between items-center">
+      <div className="bg-white/10 backdrop-blur-md rounded-3xl px-6 md:px-8 py-5 md:py-6 border border-white/10 flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-black text-white tracking-tight">Suite de <span className="text-teal-300">Investigación Académica</span></h1>
           <p className="text-white/60 font-medium mt-1">Análisis avanzado de HRV y correlación de protocolos</p>
@@ -352,7 +352,7 @@ const PatientManagement = ({ user }) => {
              <span className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">Participantes Registrados</span>
            </div>
         </div>
-        <div className="bg-white/80 backdrop-blur-md p-8 rounded-[2.5rem] shadow-sm border border-white flex items-center space-x-5">
+        <div className="bg-white/80 backdrop-blur-md p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-white flex items-center space-x-5">
            <div className="p-4 bg-cyan-50 rounded-2xl text-cyan-600 border border-cyan-100 flex items-center justify-center">
              <TrendingUp size={32} />
            </div>
@@ -363,8 +363,8 @@ const PatientManagement = ({ user }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1 bg-white/80 backdrop-blur-md p-10 rounded-[2.5rem] shadow-sm border border-white">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="lg:col-span-1 bg-white/80 backdrop-blur-md p-6 md:p-10 rounded-[2.5rem] shadow-sm border border-white">
           <h2 className="text-xl font-black text-slate-800 mb-6 flex items-center space-x-3">
              <div className="w-1 h-6 bg-teal-500 rounded-full"></div>
              <span>Añadir Participante</span>
@@ -385,7 +385,7 @@ const PatientManagement = ({ user }) => {
           </form>
         </div>
 
-        <div className="lg:col-span-2 bg-white/80 backdrop-blur-md p-10 rounded-[2.5rem] shadow-sm border border-white">
+        <div className="lg:col-span-2 bg-white/80 backdrop-blur-md p-6 md:p-10 rounded-[2.5rem] shadow-sm border border-white">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-4 border-b border-slate-50 gap-4">
             <h2 className="text-xl font-black text-slate-800">Directorio de Estudio</h2>
             <div className="relative flex-grow max-w-sm">
