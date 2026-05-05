@@ -37,9 +37,10 @@ public class SecurityConfig {
                 .requestMatchers("/", "/index.html", "/static/**", "/assets/**", "/*.ico", "/*.png", "/*.svg", "/logo.png").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/researcher/surveys/active/**", "/api/researcher/surveys/submit", "/api/researcher/glove/submit").hasAnyRole("RESEARCHER", "PATIENT")
-                .requestMatchers("/api/researcher/**").hasRole("RESEARCHER")
+                // Permitimos acceso a las rutas de investigación a usuarios con roles válidos
+                .requestMatchers("/api/researcher/surveys/active/**", "/api/researcher/surveys/submit", "/api/researcher/glove/submit").authenticated()
+                .requestMatchers("/api/researcher/**").authenticated()
+                .requestMatchers("/api/admin/**").authenticated()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

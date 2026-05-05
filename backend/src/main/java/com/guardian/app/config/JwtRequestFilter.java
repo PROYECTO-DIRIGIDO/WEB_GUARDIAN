@@ -18,11 +18,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
             try {
-                String fullToken = token.substring(7); // Extrae "username:ROLE"
+                String fullToken = token.substring(7); // Extrae "username:ROLE:timestamp"
                 String[] parts = fullToken.split(":");
-                if (parts.length == 2) {
+                if (parts.length >= 2) {
                     String username = parts[0];
-                    String role = "ROLE_" + parts[1];
+                    String role = parts[1].startsWith("ROLE_") ? parts[1] : "ROLE_" + parts[1];
                     
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                             username, null, Collections.singletonList(new SimpleGrantedAuthority(role)));
