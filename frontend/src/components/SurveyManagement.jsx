@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, CheckCircle2, MessageSquare, Smile, ListChecks, ChevronDown, Save, X, PlusCircle, AlertCircle, Check } from 'lucide-react';
+import API_BASE_URL from '../config';
 
 const SurveyManagement = ({ user }) => {
   const [surveys, setSurveys] = useState([]);
@@ -20,7 +21,7 @@ const SurveyManagement = ({ user }) => {
 
   const fetchSurveys = async () => {
     try {
-      const response = await fetch(`http://${window.location.hostname}:8080/api/researcher/surveys`, {
+      const response = await fetch(`${API_BASE_URL}/researcher/surveys`, {
         headers: { 'Authorization': `Bearer ${user.token}` }
       });
       if (response.ok) {
@@ -89,7 +90,7 @@ const SurveyManagement = ({ user }) => {
   const handleCreateSurvey = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://${window.location.hostname}:8080/api/researcher/surveys`, {
+      const response = await fetch(`${API_BASE_URL}/researcher/surveys`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,7 +118,7 @@ const SurveyManagement = ({ user }) => {
 
   const handleActivate = async (id) => {
     try {
-      const response = await fetch(`http://${window.location.hostname}:8080/api/researcher/surveys/${id}/activate`, {
+      const response = await fetch(`${API_BASE_URL}/researcher/surveys/${id}/activate`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${user.token}` }
       });
@@ -132,7 +133,7 @@ const SurveyManagement = ({ user }) => {
 
   const handleDeactivate = async (id) => {
     try {
-      const response = await fetch(`http://${window.location.hostname}:8080/api/researcher/surveys/${id}/deactivate`, {
+      const response = await fetch(`${API_BASE_URL}/researcher/surveys/${id}/deactivate`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${user.token}` }
       });
@@ -148,7 +149,7 @@ const SurveyManagement = ({ user }) => {
   const handleDelete = async (id) => {
     if (!window.confirm("¿Estás seguro de eliminar este protocolo?")) return;
     try {
-      const response = await fetch(`http://${window.location.hostname}:8080/api/researcher/surveys/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/researcher/surveys/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${user.token}` }
       });

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config';
 import { 
   FileText, CheckCircle2, MessageSquare, Smile, 
   ArrowRight, ArrowLeft, Send, Check, AlertCircle
@@ -17,7 +18,7 @@ const PatientDashboard = ({ user }) => {
   const fetchSurveys = async () => {
     try {
       setFetchError(null);
-      const response = await axios.get(`http://${window.location.hostname}:8080/api/researcher/surveys/active/${user.username}?t=${new Date().getTime()}`, {
+      const response = await axios.get(`${API_BASE_URL}/researcher/surveys/active/${user.username}?t=${new Date().getTime()}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       console.log("Surveys recibidas:", response.data);
@@ -66,7 +67,7 @@ const PatientDashboard = ({ user }) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await axios.post(`http://${window.location.hostname}:8080/api/researcher/surveys/submit`, {
+      await axios.post(`${API_BASE_URL}/researcher/surveys/submit`, {
         surveyId: selectedSurvey.survey.id,
         answers: answers
       }, {

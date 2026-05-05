@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config';
 import { 
   Users, FileDown, Activity, ArrowLeft, FileText, HeartPulse, 
   Search, Info, TrendingUp, BarChart3, Database, ChevronRight, X, Loader2,
@@ -28,7 +29,7 @@ const PatientManagement = ({ user }) => {
 
   const fetchPatients = async () => {
     try {
-      const response = await axios.get(`http://${window.location.hostname}:8080/api/researcher/patients`, {
+      const response = await axios.get(`${API_BASE_URL}/researcher/patients`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setPatients(response.data);
@@ -40,7 +41,7 @@ const PatientManagement = ({ user }) => {
   const fetchPatientDetails = async (patient) => {
     setLoadingHistory(true);
     try {
-      const historyRes = await axios.get(`http://${window.location.hostname}:8080/api/researcher/history/${patient.id}`, {
+      const historyRes = await axios.get(`${API_BASE_URL}/researcher/history/${patient.id}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setHistory(historyRes.data || { glove: [], surveys: [], statistics: {} });
@@ -73,7 +74,7 @@ const PatientManagement = ({ user }) => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`http://${window.location.hostname}:8080/api/researcher/patients`, { studyCode }, {
+      await axios.post(`${API_BASE_URL}/researcher/patients`, { studyCode }, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setMessage(`Paciente ${studyCode} registrado`);
@@ -86,7 +87,7 @@ const PatientManagement = ({ user }) => {
 
   const downloadExcel = async (type) => {
     try {
-      const response = await axios.get(`http://${window.location.hostname}:8080/api/researcher/export/${type}/${selectedPatient.id}`, {
+      const response = await axios.get(`${API_BASE_URL}/researcher/export/${type}/${selectedPatient.id}`, {
         headers: { Authorization: `Bearer ${user.token}` },
         responseType: 'blob'
       });

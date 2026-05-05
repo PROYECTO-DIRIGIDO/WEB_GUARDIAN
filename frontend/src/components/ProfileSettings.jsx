@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE_URL from '../config';
 
 const ProfileSettings = ({ user, onUpdate }) => {
   const [profile, setProfile] = useState(null);
@@ -8,7 +9,7 @@ const ProfileSettings = ({ user, onUpdate }) => {
 
   const fetchProfile = async () => {
     try {
-      const response = await fetch(`http://${window.location.hostname}:8080/api/profile`, {
+      const response = await fetch(`${API_BASE_URL}/profile`, {
         headers: { 'Authorization': `Bearer ${user.token}` }
       });
       if (response.ok) {
@@ -29,7 +30,7 @@ const ProfileSettings = ({ user, onUpdate }) => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://${window.location.hostname}:8080/api/profile`, {
+      const response = await fetch(`${API_BASE_URL}/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
