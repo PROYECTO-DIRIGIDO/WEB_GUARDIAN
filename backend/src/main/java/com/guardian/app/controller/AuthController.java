@@ -17,27 +17,30 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        String username = request.getUsername().trim();
-        String password = request.getPassword().trim();
+        String username = request.getUsername() != null ? request.getUsername().trim() : "";
+        String password = request.getPassword() != null ? request.getPassword().trim() : "";
+        
         try {
-            System.out.println(">>> Intento de login: [" + username + "] (longitud clave: " + password.length() + ")");
-            authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
-            );
+            System.out.println(">>> Intentando login manual para: [" + username + "]");
             
-            User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
-            
-            // Retornamos el nombre de usuario y rol concatenados como token para el prototipo
-            String token = user.getUsername() + ":" + user.getRole().name();
-            System.out.println(">>> Login exitoso para: " + request.getUsername());
-            return ResponseEntity.ok(new LoginResponse(token, user.getRole().name(), user.getUsername()));
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                String token = user.getUsername() + ":" + user.getRole().name() + ":" + System.currentTimeMillis();
+                System.out.println(">>> LOGIN EXITOSO: " + username);
+                return ResponseEntity.ok(new LoginResponse(token, user.getRole().name(), user.getUsername()));
+            } else {
+                System.err.println("!!! Password incorrecto para: " + username);
+                return ResponseEntity.status(401).body("Credenciales inválidas");
+            }
         } catch (Exception e) {
-            System.err.println("!!! Error en autenticación: " + e.getMessage());
-            e.printStackTrace(); // Esto nos dará todo el detalle en el log de Docker
-            return ResponseEntity.status(401).body("Error: " + e.getMessage());
+            System.err.println("!!! Error crítico en login: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error del servidor: " + e.getMessage());
         }
     }
 
