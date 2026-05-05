@@ -34,6 +34,7 @@ public class SecurityConfig {
                 return config;
             }))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/", "/index.html", "/static/**", "/assets/**", "/*.ico", "/*.png", "/*.svg", "/logo.png").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
