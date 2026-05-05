@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config';
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -9,8 +10,8 @@ const Login = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Intentamos conectar con el backend de Spring Boot
-      const response = await axios.post(`http://${window.location.hostname}:8080/api/auth/login`, {
+      // Usamos la configuración central de la API
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
         username,
         password
       });
