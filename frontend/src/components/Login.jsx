@@ -10,7 +10,7 @@ const Login = ({ onLogin }) => {
     e.preventDefault();
     try {
       // Intentamos conectar con el backend de Spring Boot
-      const response = await axios.post('http://192.168.100.5:8080/api/auth/login', {
+      const response = await axios.post(`http://${window.location.hostname}:8080/api/auth/login`, {
         username,
         password
       });

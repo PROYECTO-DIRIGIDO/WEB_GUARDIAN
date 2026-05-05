@@ -17,7 +17,7 @@ const PatientDashboard = ({ user }) => {
   const fetchSurveys = async () => {
     try {
       setFetchError(null);
-      const response = await axios.get(`http://192.168.100.5:8080/api/researcher/surveys/active/${user.username}?t=${new Date().getTime()}`, {
+      const response = await axios.get(`http://${window.location.hostname}:8080/api/researcher/surveys/active/${user.username}?t=${new Date().getTime()}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       console.log("Surveys recibidas:", response.data);
@@ -66,7 +66,7 @@ const PatientDashboard = ({ user }) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await axios.post('http://192.168.100.5:8080/api/researcher/surveys/submit', {
+      await axios.post(`http://${window.location.hostname}:8080/api/researcher/surveys/submit`, {
         surveyId: selectedSurvey.survey.id,
         answers: answers
       }, {

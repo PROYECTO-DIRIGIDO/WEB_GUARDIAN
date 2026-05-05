@@ -14,11 +14,11 @@ services:
     volumes:
       - guardian-db-data:/var/lib/postgresql/data
 
-  backend:
+  app:
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile
-    container_name: guardian-backend
+    container_name: guardian-app
     restart: always
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME:-guardian_db}
@@ -29,20 +29,6 @@ services:
       - "8080:8080"
     depends_on:
       - db
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: guardian-frontend
-    restart: always
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    depends_on:
-      - backend
 
 volumes:
   guardian-db-data:
