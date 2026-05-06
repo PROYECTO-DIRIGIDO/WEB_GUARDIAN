@@ -40,6 +40,8 @@ public class GloveData {
     // Temperaturas
     private Double obj;   // Temperatura Persona (ºC)
     private Double amb;   // Temperatura Ambiente (ºC)
+    
+    private Integer gsr;  // Respuesta Galvánica de la Piel (Estrés)
 
     @Column(nullable = false)
     private LocalDateTime timestamp;  // Fecha/Hora del Celular al recibir
