@@ -20,6 +20,7 @@ public class GloveDataController {
 
     private final GloveDataRepository gloveDataRepository;
     private final PatientRepository patientRepository;
+    private final com.guardian.app.repository.UserRepository userRepository;
 
     @PostMapping("/submit")
     public ResponseEntity<?> submitGloveData(@RequestBody List<GloveDataRequest> requests) {
@@ -27,10 +28,22 @@ public class GloveDataController {
             return ResponseEntity.ok(Map.of("message", "No hay datos para procesar"));
         }
 
-        // Obtener el paciente por el studyCode del primer registro (asumiendo que todos son del mismo)
-        String studyCode = requests.get(0).getStudyCode();
+        // Obtener o registrar automáticamente el paciente por studyCode
+        String rawCode = requests.get(0).getStudyCode();
+        final String studyCode = (rawCode != null && !rawCode.isBlank()) ? rawCode.trim() : "test";
+        
         Patient patient = patientRepository.findByStudyCode(studyCode)
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con código: " + studyCode));
+                .orElseGet(() -> {
+                    System.out.println(">>> Auto-registrando paciente para telemetría: " + studyCode);
+                    com.guardian.app.model.User researcher = userRepository.findByRole(com.guardian.app.model.Role.RESEARCHER)
+                            .stream().findFirst().orElse(null);
+                    Patient newPatient = Patient.builder()
+                            .studyCode(studyCode)
+                            .registrationDate(java.time.LocalDateTime.now())
+                            .researcher(researcher)
+                            .build();
+                    return patientRepository.save(newPatient);
+                });
 
         List<GloveData> gloveDataList = requests.stream().map(req -> GloveData.builder()
                 .patient(patient)

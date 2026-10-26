@@ -13,4 +13,5 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
     List<Survey> findByCreator(User creator);
     List<Survey> findByStatus(Survey.SurveyStatus status);
     List<Survey> findByCreatorAndStatus(User creator, Survey.SurveyStatus status);
+    java.util.Optional<Survey> findByTitle(String title);
 }

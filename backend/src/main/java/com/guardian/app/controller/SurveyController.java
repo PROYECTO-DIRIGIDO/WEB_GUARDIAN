@@ -108,10 +108,27 @@ public class SurveyController {
     // Endpoint para que el paciente consuma sus encuestas activas con su estado de cumplimiento
     @GetMapping("/active/{studyCode}")
     public List<SurveyStatusResponse> getActiveSurveysForPatient(@PathVariable String studyCode) {
-        Patient patient = patientRepository.findByStudyCode(studyCode)
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+        String code = (studyCode != null && !studyCode.isBlank()) ? studyCode.trim() : "test";
+        Patient patient = patientRepository.findByStudyCode(code)
+                .orElseGet(() -> {
+                    System.out.println(">>> Auto-registrando paciente al consultar encuestas: " + code);
+                    User researcher = userRepository.findByRole(com.guardian.app.model.Role.RESEARCHER)
+                            .stream().findFirst().orElse(null);
+                    Patient newPatient = Patient.builder()
+                            .studyCode(code)
+                            .registrationDate(LocalDateTime.now())
+                            .researcher(researcher)
+                            .build();
+                    return patientRepository.save(newPatient);
+                });
         
-        List<Survey> activeSurveys = surveyRepository.findByCreatorAndStatus(patient.getResearcher(), Survey.SurveyStatus.VIGENTE);
+        List<Survey> activeSurveys = (patient.getResearcher() != null)
+                ? surveyRepository.findByCreatorAndStatus(patient.getResearcher(), Survey.SurveyStatus.VIGENTE)
+                : surveyRepository.findByStatus(Survey.SurveyStatus.VIGENTE);
+
+        if (activeSurveys == null || activeSurveys.isEmpty()) {
+            activeSurveys = surveyRepository.findByStatus(Survey.SurveyStatus.VIGENTE);
+        }
         
         return activeSurveys.stream().map(s -> {
             LocalDateTime last = surveyResponseRepository.findTopByPatientAndSurveyOrderByTimestampDesc(patient, s)
@@ -124,12 +141,27 @@ public class SurveyController {
     @PostMapping("/submit")
     @Transactional
     public ResponseEntity<?> submitSurvey(@RequestBody SurveyResponseRequest request, Authentication authentication) {
-        String studyCode = authentication.getName();
+        String rawCode = (request.getStudyCode() != null && !request.getStudyCode().isBlank())
+                ? request.getStudyCode().trim()
+                : (authentication != null ? authentication.getName().trim() : "test");
+        final String studyCode = rawCode;
+
         Patient patient = patientRepository.findByStudyCode(studyCode)
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+                .orElseGet(() -> {
+                    System.out.println(">>> Auto-registrando paciente para encuesta: " + studyCode);
+                    User researcher = userRepository.findByRole(com.guardian.app.model.Role.RESEARCHER)
+                            .stream().findFirst().orElse(null);
+                    Patient newPatient = Patient.builder()
+                            .studyCode(studyCode)
+                            .registrationDate(LocalDateTime.now())
+                            .researcher(researcher)
+                            .build();
+                    return patientRepository.save(newPatient);
+                });
         
-        Survey survey = surveyRepository.findById(request.getSurveyId())
-                .orElseThrow(() -> new RuntimeException("Encuesta no encontrada"));
+        Survey survey = (request.getSurveyId() != null ? surveyRepository.findById(request.getSurveyId()) : java.util.Optional.<Survey>empty())
+                .orElseGet(() -> surveyRepository.findByStatus(Survey.SurveyStatus.VIGENTE).stream().findFirst()
+                        .orElseThrow(() -> new RuntimeException("Encuesta no encontrada")));
         
         SurveyResponse response = SurveyResponse.builder()
                 .patient(patient)
@@ -161,6 +193,7 @@ public class SurveyController {
 
     @Data
     public static class SurveyResponseRequest {
+        private String studyCode;
         private Long surveyId;
         private Map<String, String> answers;
         private LocalDateTime timestamp;
