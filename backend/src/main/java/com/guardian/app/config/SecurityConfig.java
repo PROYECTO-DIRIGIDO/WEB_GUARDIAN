@@ -21,6 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final JwtRequestFilter jwtRequestFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -37,14 +39,14 @@ public class SecurityConfig {
                 .requestMatchers("/", "/index.html", "/static/**", "/assets/**", "/*.ico", "/*.png", "/*.svg", "/logo.png").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
-                // Permitimos acceso a las rutas de investigación a usuarios con roles válidos
-                .requestMatchers("/api/researcher/surveys/active/**", "/api/researcher/surveys/submit", "/api/researcher/glove/submit").authenticated()
-                .requestMatchers("/api/researcher/**").authenticated()
-                .requestMatchers("/api/admin/**").authenticated()
+                // Rutas de administración restringidas estrictamente a ADMIN
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                // Rutas de investigación accesibles para RESEARCHER y ADMIN
+                .requestMatchers("/api/researcher/**").hasAnyRole("RESEARCHER", "ADMIN")
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(new JwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
