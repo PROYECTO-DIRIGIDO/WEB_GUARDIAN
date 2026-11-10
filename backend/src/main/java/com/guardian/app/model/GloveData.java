@@ -19,6 +19,10 @@ public class GloveData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    public static GloveDataBuilder customBuilder() {
+        return new GloveDataBuilder();
+    }
+
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;

@@ -1,179 +1,67 @@
 package com.guardian.app.controller;
 
-import com.guardian.app.model.Survey;
-import com.guardian.app.model.SurveyQuestion;
 import com.guardian.app.model.QuestionType;
-import com.guardian.app.model.User;
-import com.guardian.app.model.Patient;
-import com.guardian.app.model.SurveyResponse;
-import com.guardian.app.repository.SurveyRepository;
-import com.guardian.app.repository.UserRepository;
-import com.guardian.app.repository.PatientRepository;
-import com.guardian.app.repository.SurveyResponseRepository;
+import com.guardian.app.model.Survey;
+import com.guardian.app.service.SurveyService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 
+/**
+ * Controlador REST para administración y consumo de protocolos psicométricos EMA.
+ * Delega la lógica de negocio a SurveyService conforme a Clean Architecture.
+ */
 @RestController
 @RequestMapping("/api/researcher/surveys")
 @RequiredArgsConstructor
 public class SurveyController {
 
-    private final SurveyRepository surveyRepository;
-    private final UserRepository userRepository;
-    private final PatientRepository patientRepository;
-    private final SurveyResponseRepository surveyResponseRepository;
+    private final SurveyService surveyService;
 
     @GetMapping
     public List<Survey> getMySurveys(Authentication authentication) {
-        User researcher = userRepository.findByUsername(authentication.getName()).orElseThrow();
-        return surveyRepository.findByCreator(researcher);
+        return surveyService.getSurveysForResearcher(authentication.getName());
     }
 
     @PostMapping
-    @Transactional
     public ResponseEntity<?> createSurvey(@RequestBody SurveyRequest request, Authentication authentication) {
-        User researcher = userRepository.findByUsername(authentication.getName()).orElseThrow();
-
-        Survey survey = new Survey();
-        survey.setTitle(request.getTitle());
-        survey.setDescription(request.getDescription());
-        survey.setStatus(Survey.SurveyStatus.PENSADA);
-        survey.setCreator(researcher);
-
-
-        List<SurveyQuestion> questions = request.getQuestions().stream()
-                .map(qReq -> SurveyQuestion.builder()
-                        .text(qReq.getText())
-                        .type(qReq.getType())
-                        .options(qReq.getOptions())
-                        .survey(survey)
-                        .build())
-                .collect(Collectors.toList());
-        
-        survey.setQuestions(questions);
-
-        surveyRepository.save(survey);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Protocolo '" + request.getTitle() + "' guardado.");
+        Map<String, String> response = surveyService.createSurvey(request, authentication.getName());
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{id}/activate")
-    @Transactional
     public ResponseEntity<?> activateSurvey(@PathVariable Long id, Authentication authentication) {
-        Survey survey = surveyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Encuesta no encontrada"));
-
-        survey.setStatus(Survey.SurveyStatus.VIGENTE);
-        surveyRepository.save(survey);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Protocolo '" + survey.getTitle() + "' ahora está VIGENTE.");
+        Map<String, String> response = surveyService.activateSurvey(id);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{id}/deactivate")
-    @Transactional
     public ResponseEntity<?> deactivateSurvey(@PathVariable Long id, Authentication authentication) {
-        Survey survey = surveyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Encuesta no encontrada"));
-
-        survey.setStatus(Survey.SurveyStatus.PENSADA);
-        surveyRepository.save(survey);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Protocolo '" + survey.getTitle() + "' movido a borradores.");
+        Map<String, String> response = surveyService.deactivateSurvey(id);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSurvey(@PathVariable Long id) {
-        surveyRepository.deleteById(id);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Protocolo eliminado correctamente.");
+        Map<String, String> response = surveyService.deleteSurvey(id);
         return ResponseEntity.ok(response);
     }
 
-    // Endpoint para que el paciente consuma sus encuestas activas con su estado de cumplimiento
     @GetMapping("/active/{studyCode}")
     public List<SurveyStatusResponse> getActiveSurveysForPatient(@PathVariable String studyCode) {
-        String code = (studyCode != null && !studyCode.isBlank()) ? studyCode.trim() : "test";
-        Patient patient = patientRepository.findByStudyCode(code)
-                .orElseGet(() -> {
-                    System.out.println(">>> Auto-registrando paciente al consultar encuestas: " + code);
-                    User researcher = userRepository.findByRole(com.guardian.app.model.Role.RESEARCHER)
-                            .stream().findFirst().orElse(null);
-                    Patient newPatient = Patient.builder()
-                            .studyCode(code)
-                            .registrationDate(LocalDateTime.now())
-                            .researcher(researcher)
-                            .build();
-                    return patientRepository.save(newPatient);
-                });
-        
-        List<Survey> activeSurveys = (patient.getResearcher() != null)
-                ? surveyRepository.findByCreatorAndStatus(patient.getResearcher(), Survey.SurveyStatus.VIGENTE)
-                : surveyRepository.findByStatus(Survey.SurveyStatus.VIGENTE);
-
-        if (activeSurveys == null || activeSurveys.isEmpty()) {
-            activeSurveys = surveyRepository.findByStatus(Survey.SurveyStatus.VIGENTE);
-        }
-        
-        return activeSurveys.stream().map(s -> {
-            LocalDateTime last = surveyResponseRepository.findTopByPatientAndSurveyOrderByTimestampDesc(patient, s)
-                    .map(SurveyResponse::getTimestamp)
-                    .orElse(null);
-            return new SurveyStatusResponse(s, last);
-        }).collect(Collectors.toList());
+        return surveyService.getActiveSurveysForPatient(studyCode);
     }
 
     @PostMapping("/submit")
-    @Transactional
     public ResponseEntity<?> submitSurvey(@RequestBody SurveyResponseRequest request, Authentication authentication) {
-        String rawCode = (request.getStudyCode() != null && !request.getStudyCode().isBlank())
-                ? request.getStudyCode().trim()
-                : (authentication != null ? authentication.getName().trim() : "test");
-        final String studyCode = rawCode;
-
-        Patient patient = patientRepository.findByStudyCode(studyCode)
-                .orElseGet(() -> {
-                    System.out.println(">>> Auto-registrando paciente para encuesta: " + studyCode);
-                    User researcher = userRepository.findByRole(com.guardian.app.model.Role.RESEARCHER)
-                            .stream().findFirst().orElse(null);
-                    Patient newPatient = Patient.builder()
-                            .studyCode(studyCode)
-                            .registrationDate(LocalDateTime.now())
-                            .researcher(researcher)
-                            .build();
-                    return patientRepository.save(newPatient);
-                });
-        
-        Survey survey = (request.getSurveyId() != null ? surveyRepository.findById(request.getSurveyId()) : java.util.Optional.<Survey>empty())
-                .orElseGet(() -> surveyRepository.findByStatus(Survey.SurveyStatus.VIGENTE).stream().findFirst()
-                        .orElseThrow(() -> new RuntimeException("Encuesta no encontrada")));
-        
-        SurveyResponse response = SurveyResponse.builder()
-                .patient(patient)
-                .survey(survey)
-                .answers(request.getAnswers())
-                .timestamp(request.getTimestamp() != null ? request.getTimestamp() : LocalDateTime.now())
-                .build();
-        
-        surveyResponseRepository.save(response);
-        
-        Map<String, String> resp = new HashMap<>();
-        resp.put("message", "Encuesta '" + survey.getTitle() + "' enviada correctamente.");
+        String username = authentication != null ? authentication.getName() : null;
+        Map<String, String> resp = surveyService.submitSurveyResponse(request, username);
         return ResponseEntity.ok(resp);
     }
 

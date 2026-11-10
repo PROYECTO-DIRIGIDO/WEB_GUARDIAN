@@ -2,6 +2,7 @@ package com.guardian.app.service;
 
 import com.guardian.app.dto.GloveDataRequest;
 import com.guardian.app.model.GloveData;
+import com.guardian.app.model.GloveDataBuilder;
 import com.guardian.app.model.Patient;
 import com.guardian.app.model.Role;
 import com.guardian.app.model.User;
@@ -53,20 +54,13 @@ public class GloveDataService {
                     return patientRepository.save(newPatient);
                 });
 
-        List<GloveData> gloveDataList = requests.stream().map(req -> GloveData.builder()
-                .patient(patient)
-                .ts(req.getTs())
-                .ir(req.getIr())
-                .red(req.getRed())
-                .ax(req.getAx())
-                .ay(req.getAy())
-                .az(req.getAz())
-                .gx(req.getGx())
-                .gy(req.getGy())
-                .gz(req.getGz())
-                .obj(req.getObj())
-                .amb(req.getAmb())
-                .timestamp(req.getTimestamp() != null ? req.getTimestamp() : LocalDateTime.now())
+        List<GloveData> gloveDataList = requests.stream().map(req -> new GloveDataBuilder()
+                .withPatient(patient)
+                .withUptime(req.getTs())
+                .withPPG(req.getIr(), req.getRed())
+                .withIMU(req.getAx(), req.getAy(), req.getAz(), req.getGx(), req.getGy(), req.getGz())
+                .withTemperature(req.getObj(), req.getAmb())
+                .withTimestamp(req.getTimestamp() != null ? req.getTimestamp() : LocalDateTime.now())
                 .build()
         ).collect(Collectors.toList());
 
